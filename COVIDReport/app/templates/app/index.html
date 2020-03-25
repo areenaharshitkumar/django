@@ -1,0 +1,122 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+<div style="margin-top:30px"></div>
+<div class="row">
+
+    <div class="col-sm-2">
+        </div>
+    <div class="col-sm-8">
+            <div class="input-group input-group-lg">
+                <input class="form-control" style="width: 830px;" id="system-search" name="q"  placeholder="Enter text here to Fact Check" required>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" onclick="resultRequest()"><i class="glyphicon glyphicon-search"></i></button>
+                </span>
+            </div>
+    </div>
+</div>
+<div class="row" style="margin-left : 50px; margin-top:20px;">
+    <div class="col-sm-12">
+        <div class="card card-stats">
+             <div class="card-body">
+                <span><b>Result </b>: <div id="loadingimg"></div></span><div id="result"></div>
+                <div style="margin-top:20px">
+                    <b>Source</b> : <div id="source"></div>
+                </div>
+
+                <div style="margin-top:20px">
+                    <b>Link</b> : <a href="" id="link" target="_blank"></a>
+                </div>
+             </div>
+        </div>
+    </div>
+    <script>
+        function resultRequest() {
+            var search_data = document.getElementById("system-search").value;
+            var r = document.getElementById('result');
+            if (search_data != "") {
+                document.getElementById("loadingimg").innerHTML = '<img src="../static/app/images/loading.gif" >'
+                $.ajax({
+                url: '',
+                data: {
+                    form_data: { 'text': search_data,"action":"datarequest"},
+                    csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                },
+                cache: false,
+                type: 'POST',
+                success: function (res) {
+                    
+                    document.getElementById("loadingimg").innerHTML = ''
+                    r.innerHTML = res['t_data'];
+                    document.getElementById("source").innerHTML = res['source'];
+                    document.getElementById("link").innerHTML = res['link'];
+                    document.getElementById("link").href = res['link'];
+
+                }
+            });
+            }
+        }
+        function sendemial() {
+            var emailid = document.getElementById('em').value;
+            if (emailid != "") {
+                
+                $.ajax({
+                url: '',
+                    data: {
+                        form_data: { 'text': emailid , "action":"emailid"},
+                    csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                },
+                cache: false,
+                type: 'POST',
+                success: function (res) {
+                    
+                    
+                    document.getElementById("em").placeholder = 'Your email id recorded';
+
+                }
+            });
+            }
+        }
+        function likedislike(result_dic) {
+            if ( result_dic!= "") {
+                
+                $.ajax({
+                url: '',
+                    data: {
+                        form_data: { 'text': result_dic,"action":"likedislike" },
+                    csrfmiddlewaretoken: $("input[name='csrfmiddlewaretoken']").val(),
+                },
+                cache: false,
+                type: 'POST',
+                success: function (res) {
+                    
+                    
+                    document.getElementById("em").placeholder = 'Your email id recorded';
+
+                }
+            });
+            }
+        }
+    </script>
+    
+
+</div>
+<hr />
+<div class="row">
+    <div class="col-sm-6">
+       <span><botton class="btn btn-link pull-right" onclick="likedislike('1')"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></botton></span>
+    </div>
+    <div class="col-sm-1">
+        <span><botton class="btn btn-link" onclick="likedislike('0')"><i class="fa fa-thumbs-o-down" aria-hidden="true"></i></button></span>
+    </div>
+    <div class="col-sm-4">
+        <div class="input-group input-group-lg">
+                <input class="form-control" style="width: 400px;" id="em" name="q"  placeholder="Enter email to know about your query" required>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" onclick="sendemail()">Submit</button>
+                </span>
+            </div>
+    </div>
+</div>
+
+{% endblock %}
